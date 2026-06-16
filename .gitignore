@@ -1,0 +1,14 @@
+.env
+__pycache__/
+*.pyc
+data/
+*.npy
+*.zip
+venv/
+.ipynb_checkpoints/
+mlruns/
+notebooks/
+models/confusion_matrix.png
+models/sample_predictions.png
+models/training_curves.png
+models/classification_report.txt

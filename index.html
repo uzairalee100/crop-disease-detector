@@ -1,0 +1,1193 @@
+#Index.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="description" content="CropAI - AI powered crop disease detection using ResNet50 and Groq AI">
+<title>CropAI - Crop Disease Detector</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌿</text></svg>">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --green-50:  #f0fdf4;
+  --green-100: #dcfce7;
+  --green-200: #bbf7d0;
+  --green-300: #86efac;
+  --green-400: #4ade80;
+  --green-500: #22c55e;
+  --green-600: #16a34a;
+  --green-700: #15803d;
+  --green-800: #166534;
+  --green-900: #14532d;
+  --green-950: #052e16;
+  --red-50:    #fef2f2;
+  --red-100:   #fee2e2;
+  --red-200:   #fecaca;
+  --red-500:   #ef4444;
+  --red-600:   #dc2626;
+  --red-700:   #b91c1c;
+  --red-800:   #991b1b;
+  --amber-50:  #fffbeb;
+  --amber-100: #fef3c7;
+  --amber-200: #fde68a;
+  --amber-600: #d97706;
+  --amber-700: #b45309;
+  --amber-800: #92400e;
+  --gray-50:   #f9fafb;
+  --gray-100:  #f3f4f6;
+  --gray-200:  #e5e7eb;
+  --gray-300:  #d1d5db;
+  --gray-400:  #9ca3af;
+  --gray-500:  #6b7280;
+  --gray-600:  #4b5563;
+  --gray-700:  #374151;
+  --gray-800:  #1f2937;
+  --gray-900:  #111827;
+  --white:     #ffffff;
+  --bg:        #f0f2f0;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+  --shadow-md: 0 4px 16px rgba(0,0,0,.07), 0 1px 4px rgba(0,0,0,.05);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,.1), 0 2px 8px rgba(0,0,0,.06);
+  --transition: all .2s ease;
+}
+
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+               'Helvetica Neue', Arial, sans-serif;
+  background: var(--bg);
+  color: var(--gray-800);
+  min-height: 100vh;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── NAVBAR ── */
+.navbar {
+  background: var(--white);
+  border-bottom: 1px solid var(--gray-200);
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: var(--shadow-sm);
+}
+.navbar-inner {
+  max-width: 1200px; margin: 0 auto;
+  padding: 0 20px; height: 58px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+.brand-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--green-600), var(--green-500));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; box-shadow: 0 2px 8px rgba(22,163,74,.3);
+  flex-shrink: 0;
+}
+.brand-name { font-size: 18px; font-weight: 700; color: var(--gray-900); letter-spacing: -.3px; }
+.brand-name span { color: var(--green-600); }
+.nav-badges { display: flex; gap: 6px; align-items: center; }
+.nbadge {
+  font-size: 12px; font-weight: 600; padding: 4px 11px;
+  border-radius: var(--radius-sm); white-space: nowrap;
+}
+.nbadge-green { background: var(--green-50); color: var(--green-700); border: 1px solid var(--green-200); }
+.nbadge-amber { background: var(--amber-50); color: var(--amber-700); border: 1px solid var(--amber-200); }
+
+/* ── HERO ── */
+.hero {
+  background: linear-gradient(135deg, var(--green-950) 0%, var(--green-900) 45%, var(--green-800) 100%);
+  padding: 48px 20px 40px;
+  text-align: center;
+  position: relative; overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at 20% 60%, rgba(74,222,128,.1) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 40%, rgba(134,239,172,.07) 0%, transparent 50%);
+  pointer-events: none;
+}
+.hero-inner { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; }
+.hero-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(74,222,128,.12); border: 1px solid rgba(74,222,128,.25);
+  color: var(--green-300); font-size: 11px; font-weight: 600;
+  letter-spacing: .8px; text-transform: uppercase;
+  padding: 5px 14px; border-radius: 100px; margin-bottom: 16px;
+}
+.hero-title {
+  font-size: clamp(1.7rem, 5vw, 2.6rem);
+  font-weight: 800; color: var(--white);
+  letter-spacing: -.5px; line-height: 1.15; margin-bottom: 10px;
+}
+.hero-title em { color: var(--green-400); font-style: normal; }
+.hero-desc { color: var(--green-200); font-size: clamp(13px, 2vw, 15px); margin-bottom: 28px; }
+.stats-bar {
+  display: inline-flex; flex-wrap: wrap; justify-content: center;
+  background: rgba(0,0,0,.2); border: 1px solid rgba(255,255,255,.1);
+  border-radius: var(--radius-md); overflow: hidden;
+}
+.stat { padding: 12px clamp(14px,3vw,26px); text-align: center; border-right: 1px solid rgba(255,255,255,.08); }
+.stat:last-child { border-right: none; }
+.stat-n { color: var(--green-400); font-size: clamp(1.1rem,3vw,1.45rem); font-weight: 800; display: block; }
+.stat-l { color: var(--green-300); font-size: 11px; display: block; margin-top: 1px; }
+
+/* ── MAIN ── */
+.main { max-width: 1200px; margin: 0 auto; padding: 24px 20px 60px; }
+
+/* ── TABS ── */
+.tabs {
+  display: flex; gap: 4px;
+  background: var(--white); border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md); padding: 4px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-sm);
+  overflow-x: auto; -webkit-overflow-scrolling: touch;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab-btn {
+  flex: 1; min-width: 80px; padding: 9px 16px;
+  font-size: 14px; font-weight: 600;
+  color: var(--gray-500); background: transparent;
+  border: none; border-radius: var(--radius-sm);
+  cursor: pointer; transition: var(--transition);
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  white-space: nowrap;
+}
+.tab-btn:hover { background: var(--green-50); color: var(--green-700); }
+.tab-btn.active {
+  background: linear-gradient(135deg, var(--green-700), var(--green-500));
+  color: var(--white);
+  box-shadow: 0 2px 8px rgba(22,163,74,.3);
+}
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ── GRID ── */
+.detect-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+@media (max-width: 768px) {
+  .detect-grid { grid-template-columns: 1fr; }
+}
+
+/* ── CARD ── */
+.card {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow .2s;
+  margin-bottom: 16px;
+}
+.card:hover { box-shadow: var(--shadow-md); }
+.card-head {
+  padding: 13px 18px;
+  border-bottom: 1px solid var(--gray-100);
+  display: flex; align-items: center; gap: 10px;
+  background: linear-gradient(135deg, #fafff9, #f4fbf4);
+}
+.ch-icon {
+  width: 32px; height: 32px; border-radius: var(--radius-sm);
+  background: var(--green-50); border: 1px solid var(--green-200);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0;
+}
+.ch-title { font-size: 14px; font-weight: 700; color: var(--gray-900); }
+.ch-sub   { font-size: 12px; color: var(--gray-400); margin-top: 1px; }
+.card-body { padding: 18px; }
+
+/* ── UPLOAD ── */
+.upload-zone {
+  border: 2px dashed var(--green-300);
+  border-radius: var(--radius-md);
+  padding: 32px 20px;
+  text-align: center;
+  background: var(--green-50);
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+}
+.upload-zone:hover, .upload-zone.drag-over {
+  border-color: var(--green-500);
+  background: var(--green-100);
+  transform: scale(1.005);
+}
+.upload-emoji { font-size: 36px; display: block; margin-bottom: 10px; }
+.upload-title { font-size: 15px; font-weight: 600; color: var(--gray-700); margin-bottom: 4px; }
+.upload-sub   { font-size: 13px; color: var(--gray-400); margin-bottom: 14px; }
+.upload-btn-inner {
+  display: inline-flex; align-items: center; gap: 7px;
+  background: linear-gradient(135deg, var(--green-700), var(--green-500));
+  color: var(--white); font-size: 14px; font-weight: 600;
+  padding: 9px 22px; border-radius: var(--radius-sm);
+  box-shadow: 0 3px 10px rgba(22,163,74,.3);
+  transition: var(--transition);
+}
+.upload-btn-inner:hover {
+  box-shadow: 0 5px 18px rgba(22,163,74,.45);
+  transform: translateY(-1px);
+}
+#file-input { display: none; }
+.preview-wrap {
+  display: none; margin-top: 14px;
+  border-radius: var(--radius-md); overflow: hidden;
+  border: 1px solid var(--gray-200);
+  box-shadow: var(--shadow-sm); position: relative;
+}
+.preview-wrap img {
+  width: 100%; max-height: 220px;
+  object-fit: cover; display: block;
+}
+.preview-overlay {
+  position: absolute; top: 8px; right: 8px;
+  background: rgba(0,0,0,.5); color: var(--white);
+  font-size: 12px; font-weight: 600;
+  padding: 4px 10px; border-radius: 100px;
+  display: flex; align-items: center; gap: 5px;
+}
+.remove-btn {
+  background: none; border: none; color: var(--white);
+  cursor: pointer; padding: 0; font-size: 14px;
+  display: flex; align-items: center;
+}
+
+/* ── FORM ── */
+.form-group { margin-bottom: 14px; }
+.form-label {
+  display: block; font-size: 13px; font-weight: 600;
+  color: var(--gray-600); margin-bottom: 6px;
+}
+select {
+  width: 100%; padding: 9px 12px; font-size: 14px;
+  border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm);
+  background: var(--white); color: var(--gray-800);
+  appearance: none; cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7280' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 12px center;
+  transition: var(--transition);
+}
+select:focus { outline: none; border-color: var(--green-400); box-shadow: 0 0 0 3px rgba(34,197,94,.1); }
+.lang-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.lang-opt {
+  padding: 9px 10px; text-align: center; font-size: 14px; font-weight: 500;
+  border: 1.5px solid var(--gray-200); border-radius: var(--radius-sm);
+  cursor: pointer; color: var(--gray-500); background: var(--white);
+  transition: var(--transition); user-select: none;
+}
+.lang-opt:hover { border-color: var(--green-300); color: var(--green-700); background: var(--green-50); }
+.lang-opt.active { background: var(--green-50); border-color: var(--green-500); color: var(--green-700); font-weight: 600; }
+
+/* ── DETECT BUTTON ── */
+.detect-btn {
+  width: 100%; padding: 14px 20px;
+  background: linear-gradient(135deg, var(--green-700), var(--green-500));
+  color: var(--white); border: none; border-radius: var(--radius-md);
+  font-size: 15px; font-weight: 700; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 9px;
+  box-shadow: 0 4px 16px rgba(22,163,74,.3);
+  transition: var(--transition);
+  margin-top: 16px;
+}
+.detect-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--green-800), var(--green-600));
+  box-shadow: 0 6px 24px rgba(22,163,74,.45);
+  transform: translateY(-2px);
+}
+.detect-btn:active { transform: translateY(0); }
+.detect-btn:disabled { opacity: .6; cursor: not-allowed; transform: none; }
+.detect-btn .spinner {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 2.5px solid rgba(255,255,255,.4);
+  border-top-color: var(--white);
+  animation: spin .7s linear infinite;
+  display: none;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── RESULT PANEL ── */
+.result-card { min-height: 480px; }
+.empty-state { text-align: center; padding: 44px 20px; }
+.empty-icon  { font-size: 52px; display: block; margin-bottom: 14px; }
+.empty-title { font-size: 17px; font-weight: 700; color: var(--gray-700); margin-bottom: 8px; }
+.empty-sub   { font-size: 13px; color: var(--gray-400); line-height: 1.7; margin-bottom: 16px; }
+.steps-list  { list-style: none; max-width: 220px; margin: 0 auto; text-align: left; }
+.steps-list li {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 13px; color: var(--gray-500);
+  padding: 6px 0; border-bottom: 1px solid var(--gray-100);
+}
+.steps-list li:last-child { border-bottom: none; }
+.step-dot {
+  width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--green-600), var(--green-400));
+  color: var(--white); font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* ── LOADING ── */
+.loading-state { display: none; text-align: center; padding: 60px 20px; }
+.loading-ring {
+  width: 52px; height: 52px; border-radius: 50%;
+  border: 4px solid var(--green-100);
+  border-top-color: var(--green-500);
+  animation: spin .8s linear infinite;
+  margin: 0 auto 16px;
+}
+.loading-text { font-size: 15px; font-weight: 600; color: var(--gray-600); }
+.loading-sub  { font-size: 13px; color: var(--gray-400); margin-top: 4px; }
+
+/* ── DISEASE BANNER ── */
+.result-state { display: none; }
+.disease-banner {
+  border-radius: var(--radius-md); padding: 16px 18px; margin-bottom: 16px;
+  display: flex; align-items: center; gap: 14px;
+}
+.disease-banner.bad {
+  background: linear-gradient(135deg, #fff5f5, var(--red-50));
+  border: 1.5px solid var(--red-200);
+}
+.disease-banner.good {
+  background: linear-gradient(135deg, var(--green-50), #f7fef9);
+  border: 1.5px solid var(--green-200);
+}
+.banner-icon { font-size: 36px; flex-shrink: 0; line-height: 1; }
+.banner-name { font-size: 1.1rem; font-weight: 800; margin-bottom: 3px; }
+.banner-name.bad  { color: var(--red-700); }
+.banner-name.good { color: var(--green-800); }
+.banner-sub { font-size: 13px; color: var(--gray-500); }
+
+/* ── CONFIDENCE ── */
+.conf-section { margin-bottom: 12px; }
+.conf-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
+.conf-label { font-size: 13px; font-weight: 600; color: var(--gray-600); }
+.conf-value { font-size: 15px; font-weight: 800; color: var(--green-600); }
+.conf-bar   { background: var(--green-100); border-radius: 100px; height: 10px; overflow: hidden; }
+.conf-fill  { height: 100%; border-radius: 100px; background: linear-gradient(90deg, var(--green-600), var(--green-400)); transition: width .6s ease; }
+
+/* ── SEVERITY ── */
+.sev-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 5px 13px; border-radius: 100px;
+  font-size: 12px; font-weight: 700; margin-bottom: 16px;
+}
+.sev-critical { background: #ede9fe; color: #5b21b6; border: 1px solid #c4b5fd; }
+.sev-high     { background: var(--red-100); color: var(--red-700); border: 1px solid var(--red-200); }
+.sev-medium   { background: var(--amber-100); color: var(--amber-800); border: 1px solid var(--amber-200); }
+.sev-low      { background: var(--green-100); color: var(--green-800); border: 1px solid var(--green-200); }
+.sev-none     { background: var(--green-100); color: var(--green-800); border: 1px solid var(--green-200); }
+
+/* ── ADVICE ── */
+.advice-wrap {
+  background: #f7fdf7; border: 1px solid var(--green-200);
+  border-radius: var(--radius-md); overflow: hidden; margin-bottom: 14px;
+}
+.advice-head {
+  background: linear-gradient(135deg, var(--green-100), var(--green-200));
+  padding: 11px 16px; border-bottom: 1px solid var(--green-200);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.advice-head-title { font-size: 13px; font-weight: 700; color: var(--green-900); display: flex; align-items: center; gap: 6px; }
+.copy-btn {
+  background: var(--white); border: 1px solid var(--green-200);
+  color: var(--green-700); font-size: 12px; font-weight: 600;
+  padding: 4px 12px; border-radius: var(--radius-sm);
+  cursor: pointer; display: flex; align-items: center; gap: 5px;
+  transition: var(--transition);
+}
+.copy-btn:hover { background: var(--green-50); border-color: var(--green-400); }
+.copy-btn.copied { background: var(--green-600); color: var(--white); border-color: var(--green-600); }
+.advice-body {
+  padding: 16px; color: var(--green-900);
+  font-size: 13px; line-height: 1.85;
+  max-height: 260px; overflow-y: auto;
+  scrollbar-width: thin; scrollbar-color: var(--green-200) transparent;
+}
+.advice-body::-webkit-scrollbar { width: 4px; }
+.advice-body::-webkit-scrollbar-track { background: transparent; }
+.advice-body::-webkit-scrollbar-thumb { background: var(--green-200); border-radius: 4px; }
+
+/* ── SUCCESS BAR ── */
+.success-toast {
+  background: var(--green-50); border: 1px solid var(--green-200);
+  border-radius: var(--radius-sm); padding: 10px 14px;
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 600; color: var(--green-700);
+  margin-top: 10px;
+}
+.toast-icon { font-size: 16px; }
+
+/* ── ERROR ── */
+.error-box {
+  background: var(--red-50); border: 1px solid var(--red-200);
+  border-radius: var(--radius-sm); padding: 14px 16px;
+  color: var(--red-700); font-size: 13px; font-weight: 500;
+  display: none; align-items: flex-start; gap: 10px;
+}
+.error-box.show { display: flex; }
+
+/* ── HISTORY TAB ── */
+.metrics-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 20px; }
+.metric-box {
+  background: var(--white); border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md); padding: 16px;
+  text-align: center; box-shadow: var(--shadow-sm);
+}
+.metric-n { font-size: clamp(1.5rem,3vw,2rem); font-weight: 800; color: var(--green-700); display: block; }
+.metric-l { font-size: 12px; color: var(--gray-400); font-weight: 600; display: block; margin-top: 3px; }
+.hist-list { display: flex; flex-direction: column; gap: 8px; }
+.hist-item {
+  background: var(--white); border: 1px solid var(--gray-200);
+  border-radius: var(--radius-md); padding: 13px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px; box-shadow: var(--shadow-sm); transition: var(--transition);
+}
+.hist-item:hover { box-shadow: var(--shadow-md); transform: translateY(-1px); }
+.hist-info { flex: 1; min-width: 0; }
+.hist-name { font-size: 14px; font-weight: 700; color: var(--gray-800); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hist-meta { font-size: 12px; color: var(--gray-400); margin-top: 2px; }
+.hist-badge { padding: 4px 12px; border-radius: 100px; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+.hist-empty { text-align: center; padding: 60px 20px; }
+.hist-empty-icon  { font-size: 48px; display: block; margin-bottom: 14px; }
+.hist-empty-title { font-size: 16px; font-weight: 700; color: var(--gray-600); margin-bottom: 6px; }
+.hist-empty-sub   { font-size: 13px; color: var(--gray-400); }
+.clear-btn {
+  display: flex; align-items: center; gap: 7px;
+  background: var(--red-50); border: 1px solid var(--red-200);
+  color: var(--red-600); font-size: 13px; font-weight: 600;
+  padding: 9px 18px; border-radius: var(--radius-sm);
+  cursor: pointer; transition: var(--transition); margin-top: 16px;
+}
+.clear-btn:hover { background: var(--red-100); }
+
+/* ── ABOUT TAB ── */
+.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 520px) { .about-grid { grid-template-columns: 1fr; } }
+.about-card {
+  background: var(--white); border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg); overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+.about-card-head {
+  background: linear-gradient(135deg, var(--green-50), var(--green-100));
+  padding: 13px 18px; border-bottom: 1px solid var(--green-100);
+  font-size: 14px; font-weight: 700; color: var(--green-900);
+  display: flex; align-items: center; gap: 8px;
+}
+.about-card-body { padding: 0 18px; }
+.about-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 11px 0; border-bottom: 1px solid var(--gray-100);
+  font-size: 13px;
+}
+.about-row:last-child { border-bottom: none; }
+.about-key { color: var(--gray-500); }
+.about-val { color: var(--gray-800); font-weight: 600; }
+.about-full { grid-column: 1 / -1; }
+.crop-tags { display: flex; flex-wrap: wrap; gap: 6px; padding: 16px 18px; }
+.crop-tag {
+  background: var(--green-50); color: var(--green-700);
+  border: 1px solid var(--green-200); border-radius: 100px;
+  font-size: 12px; font-weight: 600; padding: 4px 12px;
+}
+
+/* ── FOOTER ── */
+.footer {
+  text-align: center; padding: 24px 20px;
+  font-size: 12px; color: var(--gray-400);
+  border-top: 1px solid var(--gray-200);
+  background: var(--white); margin-top: 40px;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 480px) {
+  .navbar-inner { padding: 0 14px; }
+  .nbadge:first-child { display: none; }
+  .hero { padding: 36px 16px 32px; }
+  .stats-bar { width: 100%; }
+  .stat { flex: 1; padding: 10px 8px; }
+  .main { padding: 16px 14px 50px; }
+  .tabs { gap: 2px; }
+  .tab-btn { font-size: 13px; padding: 8px 10px; gap: 4px; }
+  .metrics-row { gap: 8px; }
+}
+
+@media (min-width: 1400px) {
+  .main { padding: 28px 40px 80px; }
+  .detect-grid { gap: 28px; }
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.fade-in { animation: fadeIn .3s ease forwards; }
+@keyframes slideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+.slide-up { animation: slideUp .4s ease forwards; }
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar" role="navigation" aria-label="Main navigation">
+  <div class="navbar-inner">
+    <a class="brand" href="#" aria-label="CropAI home">
+      <div class="brand-icon" aria-hidden="true">🌿</div>
+      <span class="brand-name">Crop<span>AI</span></span>
+    </a>
+    <div class="nav-badges">
+      <span class="nbadge nbadge-green">ResNet50 + Groq</span>
+      <span class="nbadge nbadge-amber">⭐ 98.78%</span>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" aria-label="Hero section">
+  <div class="hero-inner">
+    <div class="hero-chip">✦ AI Powered Plant Health Detection</div>
+    <h1 class="hero-title">Detect Crop <em>Disease</em> in Seconds</h1>
+    <p class="hero-desc">Upload a leaf photo · AI diagnoses instantly · Get expert treatment advice</p>
+    <div class="stats-bar" role="list" aria-label="Model statistics">
+      <div class="stat" role="listitem"><span class="stat-n">98.78%</span><span class="stat-l">Accuracy</span></div>
+      <div class="stat" role="listitem"><span class="stat-n">26</span><span class="stat-l">Diseases</span></div>
+      <div class="stat" role="listitem"><span class="stat-n">54K+</span><span class="stat-l">Images</span></div>
+      <div class="stat" role="listitem"><span class="stat-n">14</span><span class="stat-l">Crops</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- MAIN -->
+<main class="main">
+
+  <!-- TABS -->
+  <div class="tabs" role="tablist" aria-label="App sections">
+    <button class="tab-btn active" role="tab" aria-selected="true" aria-controls="tab-detect" onclick="switchTab('detect',this)">
+      🔍 Detect Disease
+    </button>
+    <button class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-history" onclick="switchTab('history',this)">
+      📋 Scan History
+    </button>
+    <button class="tab-btn" role="tab" aria-selected="false" aria-controls="tab-about" onclick="switchTab('about',this)">
+      ℹ️ About
+    </button>
+  </div>
+
+  <!-- ═══ DETECT TAB ═══ -->
+  <div id="tab-detect" class="tab-content active" role="tabpanel" aria-label="Detect disease">
+    <div class="detect-grid">
+
+      <!-- LEFT COLUMN -->
+      <div class="left-col">
+
+        <!-- Upload Card -->
+        <div class="card">
+          <div class="card-head">
+            <div class="ch-icon" aria-hidden="true">📷</div>
+            <div>
+              <div class="ch-title">Upload Leaf Image</div>
+              <div class="ch-sub">JPG · PNG · WEBP supported</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="upload-zone" id="upload-zone"
+                 onclick="document.getElementById('file-input').click()"
+                 ondragover="handleDragOver(event)"
+                 ondragleave="handleDragLeave(event)"
+                 ondrop="handleDrop(event)"
+                 role="button" tabindex="0"
+                 aria-label="Upload leaf image — click or drag and drop"
+                 onkeydown="if(event.key==='Enter'||event.key===' ')document.getElementById('file-input').click()">
+              <span class="upload-emoji" aria-hidden="true">🍃</span>
+              <div class="upload-title">Drop your leaf image here</div>
+              <div class="upload-sub">Supports JPG, PNG, WEBP up to 10MB</div>
+              <div class="upload-btn-inner">
+                📂 Browse Files
+              </div>
+            </div>
+            <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp"
+                   onchange="handleFile(this.files[0])" aria-label="Choose leaf image file">
+            <div class="preview-wrap" id="preview-wrap">
+              <img id="preview-img" src="" alt="Uploaded leaf preview">
+              <div class="preview-overlay">
+                <span>✅ Ready</span>
+                <button class="remove-btn" onclick="removeImage(event)" aria-label="Remove uploaded image">✕</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Settings Card -->
+        <div class="card">
+          <div class="card-head">
+            <div class="ch-icon" aria-hidden="true">⚙️</div>
+            <div>
+              <div class="ch-title">Detection Settings</div>
+              <div class="ch-sub">Configure your scan</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label class="form-label" for="crop-select">🌱 Crop Type</label>
+              <select id="crop-select" aria-label="Select crop type">
+                <option value="Auto Detect">Auto Detect</option>
+                <option value="Apple">Apple</option>
+                <option value="Blueberry">Blueberry</option>
+                <option value="Cherry">Cherry</option>
+                <option value="Corn / Maize">Corn / Maize</option>
+                <option value="Grape">Grape</option>
+                <option value="Orange">Orange</option>
+                <option value="Peach">Peach</option>
+                <option value="Pepper">Pepper</option>
+                <option value="Potato">Potato</option>
+                <option value="Raspberry">Raspberry</option>
+                <option value="Soybean">Soybean</option>
+                <option value="Squash">Squash</option>
+                <option value="Strawberry">Strawberry</option>
+                <option value="Tomato">Tomato</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">🌐 Language</label>
+              <div class="lang-group" role="radiogroup" aria-label="Select language">
+                <div class="lang-opt active" id="lang-en" onclick="selectLang('en')" role="radio" aria-checked="true" tabindex="0">English</div>
+                <div class="lang-opt" id="lang-ur" onclick="selectLang('ur')" role="radio" aria-checked="false" tabindex="0">اردو</div>
+              </div>
+            </div>
+            <button class="detect-btn" id="detect-btn" onclick="runDetection()" aria-label="Analyze and detect crop disease">
+              <div class="spinner" id="spinner" aria-hidden="true"></div>
+              <span id="btn-text">🔍 Analyze &amp; Detect Disease</span>
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN — RESULT -->
+      <div class="right-col">
+        <div class="card result-card">
+          <div class="card-head">
+            <div class="ch-icon" aria-hidden="true">🔬</div>
+            <div>
+              <div class="ch-title">Detection Result</div>
+              <div class="ch-sub">AI diagnosis and treatment advice</div>
+            </div>
+          </div>
+          <div class="card-body">
+
+            <!-- Empty state -->
+            <div class="empty-state" id="empty-state">
+              <span class="empty-icon" aria-hidden="true">🌿</span>
+              <div class="empty-title">Ready to Analyze</div>
+              <div class="empty-sub">Upload a leaf image on the left,<br>then click Analyze &amp; Detect</div>
+              <ul class="steps-list" aria-label="How to use">
+                <li><span class="step-dot" aria-hidden="true">1</span>Upload a clear leaf photo</li>
+                <li><span class="step-dot" aria-hidden="true">2</span>Select your crop type</li>
+                <li><span class="step-dot" aria-hidden="true">3</span>Choose language</li>
+                <li><span class="step-dot" aria-hidden="true">4</span>Click Analyze &amp; Detect</li>
+                <li><span class="step-dot" aria-hidden="true">5</span>Get diagnosis + treatment</li>
+              </ul>
+            </div>
+
+            <!-- Loading state -->
+            <div class="loading-state" id="loading-state" aria-live="polite" aria-label="Analyzing crop disease">
+              <div class="loading-ring" aria-hidden="true"></div>
+              <div class="loading-text">Analyzing your crop...</div>
+              <div class="loading-sub">AI is detecting diseases, please wait</div>
+            </div>
+
+            <!-- Error state -->
+            <div class="error-box" id="error-box" role="alert" aria-live="assertive">
+              <span>⚠️</span>
+              <span id="error-msg">Something went wrong. Please make sure your FastAPI server is running at http://127.0.0.1:8000</span>
+            </div>
+
+            <!-- Result state -->
+            <div class="result-state" id="result-state" aria-live="polite">
+              <div class="disease-banner" id="disease-banner">
+                <span class="banner-icon" id="banner-icon" aria-hidden="true"></span>
+                <div>
+                  <div class="banner-name" id="banner-name"></div>
+                  <div class="banner-sub" id="banner-sub"></div>
+                </div>
+              </div>
+
+              <div class="conf-section">
+                <div class="conf-header">
+                  <span class="conf-label">Confidence Score</span>
+                  <span class="conf-value" id="conf-value">0%</span>
+                </div>
+                <div class="conf-bar"><div class="conf-fill" id="conf-fill" style="width:0%"></div></div>
+              </div>
+
+              <span class="sev-badge" id="sev-badge" aria-label="Severity level"></span>
+
+              <div class="advice-wrap">
+                <div class="advice-head">
+                  <span class="advice-head-title">💊 Treatment Advice</span>
+                  <button class="copy-btn" id="copy-btn" onclick="copyAdvice()" aria-label="Copy treatment advice">
+                    📋 Copy
+                  </button>
+                </div>
+                <div class="advice-body" id="advice-body"></div>
+              </div>
+
+              <div class="success-toast" id="success-toast">
+                <span class="toast-icon" aria-hidden="true">✅</span>
+                Analysis complete! Saved to scan history.
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ HISTORY TAB ═══ -->
+  <div id="tab-history" class="tab-content" role="tabpanel" aria-label="Scan history">
+    <div class="metrics-row" id="metrics-row" style="display:none;">
+      <div class="metric-box"><span class="metric-n" id="m-total">0</span><span class="metric-l">Total Scans</span></div>
+      <div class="metric-box"><span class="metric-n" id="m-diseased">0</span><span class="metric-l">Diseased</span></div>
+      <div class="metric-box"><span class="metric-n" id="m-healthy">0</span><span class="metric-l">Healthy</span></div>
+    </div>
+    <div id="hist-empty" class="card" style="display:none;">
+      <div class="card-body hist-empty">
+        <span class="hist-empty-icon" aria-hidden="true">📋</span>
+        <div class="hist-empty-title">No Scans Yet</div>
+        <div class="hist-empty-sub">Go to Detect tab and scan your first crop image</div>
+      </div>
+    </div>
+    <div class="hist-list" id="hist-list"></div>
+    <button class="clear-btn" id="clear-btn" onclick="clearHistory()" style="display:none;" aria-label="Clear all scan history">
+      🗑️ Clear All History
+    </button>
+  </div>
+
+  <!-- ═══ ABOUT TAB ═══ -->
+  <div id="tab-about" class="tab-content" role="tabpanel" aria-label="About this app">
+    <div class="about-grid">
+
+      <div class="about-card">
+        <div class="about-card-head">🤖 AI Model</div>
+        <div class="about-card-body">
+          <div class="about-row"><span class="about-key">Architecture</span><span class="about-val">ResNet50</span></div>
+          <div class="about-row"><span class="about-key">Method</span><span class="about-val">Transfer Learning</span></div>
+          <div class="about-row"><span class="about-key">Dataset</span><span class="about-val">PlantVillage</span></div>
+          <div class="about-row"><span class="about-key">Training images</span><span class="about-val">54,000+</span></div>
+          <div class="about-row"><span class="about-key">Accuracy</span><span class="about-val">98.78%</span></div>
+          <div class="about-row"><span class="about-key">Disease classes</span><span class="about-val">26</span></div>
+        </div>
+      </div>
+
+      <div class="about-card">
+        <div class="about-card-head">🛠️ Tech Stack</div>
+        <div class="about-card-body">
+          <div class="about-row"><span class="about-key">Language</span><span class="about-val">Python 3.11</span></div>
+          <div class="about-row"><span class="about-key">Deep learning</span><span class="about-val">PyTorch</span></div>
+          <div class="about-row"><span class="about-key">AI advisor</span><span class="about-val">Groq Llama3</span></div>
+          <div class="about-row"><span class="about-key">API backend</span><span class="about-val">FastAPI</span></div>
+          <div class="about-row"><span class="about-key">Image processing</span><span class="about-val">PIL / Pillow</span></div>
+          <div class="about-row"><span class="about-key">Base model</span><span class="about-val">ResNet50</span></div>
+        </div>
+      </div>
+
+      <div class="about-card about-full">
+        <div class="about-card-head">🌿 Supported Crops</div>
+        <div class="crop-tags" aria-label="Supported crop types">
+          <span class="crop-tag">Apple</span>
+          <span class="crop-tag">Blueberry</span>
+          <span class="crop-tag">Cherry</span>
+          <span class="crop-tag">Corn</span>
+          <span class="crop-tag">Grape</span>
+          <span class="crop-tag">Orange</span>
+          <span class="crop-tag">Peach</span>
+          <span class="crop-tag">Pepper</span>
+          <span class="crop-tag">Potato</span>
+          <span class="crop-tag">Raspberry</span>
+          <span class="crop-tag">Soybean</span>
+          <span class="crop-tag">Squash</span>
+          <span class="crop-tag">Strawberry</span>
+          <span class="crop-tag">Tomato</span>
+        </div>
+      </div>
+
+      <div class="about-card about-full">
+        </div>
+      </div>
+
+    </div>
+    </div>
+
+  </main>
+
+<footer class="footer">
+  <p>CropAI · Built with PyTorch, Groq AI & FastAPI</p>
+</footer>
+
+<script>
+// ── STATE ──────────────────────────────────────────────
+const API = 'http://127.0.0.1:8000';
+let selectedLang = 'English';
+let uploadedFile = null;
+let scanHistory  = JSON.parse(localStorage.getItem('cropai_history') || '[]');
+let lastAdvice   = '';
+
+// ── TABS ──────────────────────────────────────────────
+function switchTab(name, el) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+  document.getElementById('tab-' + name).classList.add('active');
+  el.classList.add('active');
+  el.setAttribute('aria-selected','true');
+  if (name === 'history') renderHistory();
+  if (name === 'about')   checkAPIStatus();
+}
+
+// ── LANGUAGE ──────────────────────────────────────────
+function selectLang(lang) {
+  selectedLang = lang === 'en' ? 'English' : 'Urdu';
+  document.querySelectorAll('.lang-opt').forEach(o => { o.classList.remove('active'); o.setAttribute('aria-checked','false'); });
+  const el = document.getElementById('lang-' + lang);
+  el.classList.add('active');
+  el.setAttribute('aria-checked','true');
+}
+
+// ── FILE UPLOAD ────────────────────────────────────────
+function handleFile(file) {
+  if (!file) return;
+  if (!['image/jpeg','image/png','image/webp'].includes(file.type)) {
+    showError('Please upload a JPG, PNG, or WEBP image file.');
+    return;
+  }
+  if (file.size > 10 * 1024 * 1024) {
+    showError('File size must be under 10MB.');
+    return;
+  }
+  uploadedFile = file;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('preview-img').src = e.target.result;
+    document.getElementById('upload-zone').style.display = 'none';
+    document.getElementById('preview-wrap').style.display = 'block';
+    hideError();
+  };
+  reader.readAsDataURL(file);
+}
+function removeImage(e) {
+  e.stopPropagation();
+  uploadedFile = null;
+  document.getElementById('file-input').value = '';
+  document.getElementById('preview-wrap').style.display = 'none';
+  document.getElementById('upload-zone').style.display = 'block';
+  resetResult();
+}
+function handleDragOver(e) {
+  e.preventDefault();
+  document.getElementById('upload-zone').classList.add('drag-over');
+}
+function handleDragLeave(e) {
+  document.getElementById('upload-zone').classList.remove('drag-over');
+}
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('upload-zone').classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file) handleFile(file);
+}
+
+// ── DETECTION ─────────────────────────────────────────
+async function runDetection() {
+  if (!uploadedFile) {
+    showError('Please upload a leaf image first.');
+    return;
+  }
+  setLoading(true);
+  hideError();
+
+  try {
+    // Convert image to base64 text for API
+    const reader = new FileReader();
+    reader.onload = async e => {
+      try {
+        // Send as form data to FastAPI /screen endpoint
+        const formData = new FormData();
+        formData.append('file', uploadedFile);
+
+        // Try FormData upload first
+        let response = await fetch(API + '/screen-file', {
+          method: 'POST',
+          body: formData
+        });
+
+        // Fallback to JSON with base64 if no file endpoint
+        if (!response.ok) {
+          const base64 = e.target.result.split(',')[1];
+          response = await fetch(API + '/screen', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              resume_text: `Image: ${base64.substring(0,100)}... [crop image data]`
+            })
+          });
+        }
+
+        if (!response.ok) throw new Error(`Server error: ${response.status}`);
+        const data = await response.json();
+        showResult(data);
+
+      } catch (err) {
+        // Demo mode when API not running
+        console.warn('API not available, using demo result:', err.message);
+        showResult({
+          status:     'success',
+          category:   'INFORMATION-TECHNOLOGY',
+          confidence: 95.5,
+          word_count: 84
+        }, true);
+      }
+    };
+    reader.readAsDataURL(uploadedFile);
+
+  } catch (err) {
+    setLoading(false);
+    showError('Connection failed. Please start your FastAPI server first: uvicorn main:app --reload --port 8000');
+  }
+}
+
+// ── SHOW RESULT ────────────────────────────────────────
+function showResult(data, isDemo) {
+  setLoading(false);
+
+  const category   = data.category   || data.disease || 'Unknown';
+  const confidence = parseFloat(data.confidence || 0);
+  const isHealthy  = category.toLowerCase().includes('healthy');
+  const severity   = data.severity   || (confidence > 90 ? 'High' : confidence > 70 ? 'Medium' : 'Low');
+  const advice     = data.advice     || generateDemoAdvice(category);
+  lastAdvice = advice;
+
+  // Banner
+  const banner = document.getElementById('disease-banner');
+  const bName  = document.getElementById('banner-name');
+  const bSub   = document.getElementById('banner-sub');
+  const bIcon  = document.getElementById('banner-icon');
+
+  if (isHealthy) {
+    banner.className = 'disease-banner good';
+    bIcon.textContent = '✅';
+    bName.className   = 'banner-name good';
+    bName.textContent = category.replace(/_/g,' ') + ' — Healthy';
+    bSub.textContent  = 'No disease detected · Your crop looks great!';
+  } else {
+    banner.className = 'disease-banner bad';
+    bIcon.textContent = '🦠';
+    bName.className   = 'banner-name bad';
+    bName.textContent = category.replace(/_/g,' ').replace(/--/g,' — ');
+    bSub.textContent  = 'Disease detected · See treatment advice below';
+  }
+
+  // Confidence
+  document.getElementById('conf-value').textContent = confidence.toFixed(1) + '%';
+  setTimeout(() => { document.getElementById('conf-fill').style.width = confidence + '%'; }, 100);
+
+  // Severity
+  const sevEl  = document.getElementById('sev-badge');
+  const sevKey = (severity || 'medium').toLowerCase();
+  const sevIco = { critical:'🔴', high:'🟠', medium:'🟡', low:'🟢', none:'🟢' }[sevKey] || '🟡';
+  sevEl.className   = 'sev-badge sev-' + sevKey;
+  sevEl.textContent = sevIco + ' Severity: ' + (severity || 'Medium');
+
+  // Advice
+  document.getElementById('advice-body').innerHTML = advice.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>');
+
+  // Show
+  document.getElementById('empty-state').style.display  = 'none';
+  document.getElementById('result-state').style.display = 'block';
+  document.getElementById('result-state').classList.add('slide-up');
+
+  // Save to history
+  const entry = {
+    id:         Date.now(),
+    time:       new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}),
+    date:       new Date().toLocaleDateString(),
+    crop:       category.replace(/_/g,' '),
+    confidence: confidence.toFixed(1),
+    severity:   severity || 'Medium',
+    healthy:    isHealthy,
+    demo:       !!isDemo
+  };
+  scanHistory.unshift(entry);
+  if (scanHistory.length > 50) scanHistory.pop();
+  localStorage.setItem('cropai_history', JSON.stringify(scanHistory));
+
+  if (isDemo) {
+    document.getElementById('success-toast').innerHTML = '⚠️ Demo mode — start FastAPI server for real predictions';
+    document.getElementById('success-toast').style.background = 'var(--amber-50)';
+    document.getElementById('success-toast').style.borderColor = 'var(--amber-200)';
+    document.getElementById('success-toast').style.color = 'var(--amber-800)';
+  }
+}
+
+function generateDemoAdvice(category) {
+  const cat = (category || '').toLowerCase();
+  if (cat.includes('healthy')) return 'Your crop is healthy! No disease detected.\n\nContinue regular monitoring and maintain good agricultural practices to keep your crop healthy.';
+  return `**Disease Overview**\nThis disease can significantly impact your crop yield if left untreated. Early detection is key to effective management.\n\n**Immediate Treatment Steps**\n· Apply appropriate fungicide or pesticide immediately\n· Remove and destroy all visibly infected plant parts\n· Avoid overhead irrigation — use drip irrigation\n· Ensure good air circulation between plants\n· Repeat treatment every 7-10 days\n\n**Prevention for Next Season**\n· Use disease-resistant varieties\n· Rotate crops annually\n· Monitor plants regularly for early signs\n· Maintain proper plant spacing`;
+}
+
+// ── COPY ADVICE ────────────────────────────────────────
+function copyAdvice() {
+  if (!lastAdvice) return;
+  navigator.clipboard.writeText(lastAdvice).then(() => {
+    const btn = document.getElementById('copy-btn');
+    btn.textContent = '✅ Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = '📋 Copy';
+      btn.classList.remove('copied');
+    }, 2500);
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = lastAdvice;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  });
+}
+
+// ── HISTORY ────────────────────────────────────────────
+function renderHistory() {
+  const list    = document.getElementById('hist-list');
+  const empty   = document.getElementById('hist-empty');
+  const metrics = document.getElementById('metrics-row');
+  const clearB  = document.getElementById('clear-btn');
+
+  if (!scanHistory.length) {
+    empty.style.display   = 'block';
+    metrics.style.display = 'none';
+    clearB.style.display  = 'none';
+    list.innerHTML = '';
+    return;
+  }
+
+  empty.style.display   = 'none';
+  metrics.style.display = 'grid';
+  clearB.style.display  = 'flex';
+
+  const total    = scanHistory.length;
+  const healthy  = scanHistory.filter(s => s.healthy).length;
+  const diseased = total - healthy;
+  document.getElementById('m-total').textContent   = total;
+  document.getElementById('m-diseased').textContent = diseased;
+  document.getElementById('m-healthy').textContent  = healthy;
+
+  list.innerHTML = scanHistory.map(s => {
+    const icon   = s.healthy ? '✅' : '🦠';
+    const sv     = (s.severity || 'medium').toLowerCase();
+    const colors = {
+      critical: ['#ede9fe','#5b21b6'],
+      high:     ['#fee2e2','#b91c1c'],
+      medium:   ['#fef3c7','#92400e'],
+      low:      ['#dcfce7','#166534'],
+      none:     ['#dcfce7','#166534']
+    };
+    const [bg, fg] = colors[sv] || colors.medium;
+    const demo = s.demo ? ' <small style="color:#9ca3af;">(demo)</small>' : '';
+    return `<div class="hist-item fade-in">
+      <div class="hist-info">
+        <div class="hist-name">${icon} ${s.crop}${demo}</div>
+        <div class="hist-meta">🕐 ${s.time} · ${s.date} &nbsp;·&nbsp; 📊 ${s.confidence}% confidence</div>
+      </div>
+      <span class="hist-badge" style="background:${bg};color:${fg};border:1px solid ${fg}33;">${s.severity}</span>
+    </div>`;
+  }).join('');
+}
+
+function clearHistory() {
+  if (!confirm('Clear all scan history?')) return;
+  scanHistory = [];
+  localStorage.removeItem('cropai_history');
+  renderHistory();
+}
+
+// ── HELPERS ────────────────────────────────────────────
+function setLoading(on) {
+  const btn      = document.getElementById('detect-btn');
+  const spinner  = document.getElementById('spinner');
+  const btnText  = document.getElementById('btn-text');
+  const loading  = document.getElementById('loading-state');
+  const empty    = document.getElementById('empty-state');
+  const result   = document.getElementById('result-state');
+
+  btn.disabled = on;
+  spinner.style.display = on ? 'block' : 'none';
+  btnText.textContent   = on ? 'Analyzing...' : '🔍 Analyze & Detect Disease';
+
+  if (on) {
+    empty.style.display  = 'none';
+    result.style.display = 'none';
+    loading.style.display = 'block';
+  } else {
+    loading.style.display = 'none';
+  }
+}
+
+function resetResult() {
+  document.getElementById('empty-state').style.display  = 'block';
+  document.getElementById('result-state').style.display = 'none';
+  document.getElementById('loading-state').style.display = 'none';
+  document.getElementById('conf-fill').style.width = '0%';
+  hideError();
+}
+
+function showError(msg) {
+  const box = document.getElementById('error-box');
+  document.getElementById('error-msg').textContent = msg;
+  box.classList.add('show');
+}
+function hideError() {
+  document.getElementById('error-box').classList.remove('show');
+}
+
+async function checkAPIStatus() {
+  const el = document.getElementById('api-status');
+  try {
+    const r = await fetch(API + '/health', { signal: AbortSignal.timeout(3000) });
+    if (r.ok) {
+      el.textContent = '🟢 Online';
+      el.style.color = '#166534';
+    } else {
+      el.textContent = '🔴 Error';
+      el.style.color = '#b91c1c';
+    }
+  } catch {
+    el.textContent = '🔴 Offline — start FastAPI server';
+    el.style.color = '#b91c1c';
+  }
+}
+
+// ── INIT ──────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  checkAPIStatus();
+  // keyboard for lang opts
+  document.querySelectorAll('.lang-opt').forEach(el => {
+    el.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') el.click();
+    });
+  });
+});
+</script>
+
+</body>
+</html>
+
