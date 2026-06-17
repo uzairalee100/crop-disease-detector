@@ -1,11 +1,5 @@
----
-title: Crop Disease Api
-emoji: 📈
-colorFrom: purple
-colorTo: gray
-sdk: docker
-pinned: false
-license: mit
----
+# 🌾 CropAI — AI Crop Disease Detector
 
-Check out the configuration reference at https://huggingface.co/docs/hub/spaces-config-reference
+Detect crop diseases instantly using AI. Upload a crop leaf image and receive disease predictions, confidence scores, and treatment recommendations in English or Urdu.
+
+![CropAI Banner](screenshots/detect.png)
