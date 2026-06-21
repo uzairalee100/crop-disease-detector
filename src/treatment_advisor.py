@@ -1,8 +1,3 @@
-"""
-treatment_advisor.py
-Groq AI powered crop disease treatment advisor
-Supports English and Urdu output
-"""
 import os
 from groq import Groq
 from dotenv import load_dotenv
