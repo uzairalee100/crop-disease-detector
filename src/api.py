@@ -1,12 +1,3 @@
-"""
-api.py - CropAI FastAPI Backend
-Place this file at: D:\crop_disease_detector\src\api.py
-
-Run with:
-    cd D:\crop_disease_detector
-    uvicorn src.api:app --reload --port 8000
-"""
-
 import sys
 import os
 from io import BytesIO
