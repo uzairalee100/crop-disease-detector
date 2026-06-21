@@ -1,8 +1,3 @@
-"""
-predictor.py
-Combines CNN model prediction + Groq treatment advice
-Main module used by Streamlit app
-"""
 import torch
 import torchvision
 from torchvision import models, transforms
